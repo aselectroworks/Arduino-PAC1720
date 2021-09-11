@@ -1,4 +1,4 @@
-# FT6336U Library
+# PAC1710/20 Library
 Microchip PAC1710/20 Single and Dual High-Side Current-Sense Monitor with Power Calculation library for Arduino.
 
 ## License
