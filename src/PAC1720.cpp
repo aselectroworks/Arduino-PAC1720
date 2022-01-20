@@ -40,10 +40,10 @@ void PAC1720::begin() {
     }
     // Check PID
     uint8_t pid = readPID(); 
-    if(pid == 0x57) {
+    if(pid == 0x58) {
         DEBUG_PRINTF("PAC1710 is detected\n"); 
     }
-    else if(pid == 0x58) {
+    else if(pid == 0x57) {
         DEBUG_PRINTF("PAC1720 is detected\n"); 
     }
 }
@@ -54,6 +54,9 @@ void PAC1720::begin(float shuntResistance) {
     calcFSP(); 
 
     begin();
+}
+void PAC1720::end() {
+    enableMeasurement(false, false, false, false); 
 }
 
 void PAC1720::setClockSpeed(PAC1720_I2C_CLOCK_SPEED speed) {

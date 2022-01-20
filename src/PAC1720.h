@@ -232,6 +232,7 @@ class PAC1720 {
 
     void begin();
     void begin(float shuntResistance);
+    void end(); 
 
     void setClockSpeed(PAC1720_I2C_CLOCK_SPEED speed); 
     void setAddress(PAC1720_ADDR_Enum ad); 
