@@ -11,6 +11,8 @@
 
 PAC1720::PAC1720() {
 #ifdef PAC1720_DEBUG
+    DEBUG_PRINTER.end(); 
+    delay(100); 
     DEBUG_PRINTER.begin(115200);
 #endif
     DEBUG_PRINTLN("Call Contructor");
@@ -19,6 +21,8 @@ PAC1720::PAC1720() {
 PAC1720::PAC1720(int8_t sda, int8_t scl, PAC1720_ADDR_Enum ad) 
 : _sda(sda), _scl(scl), _deviceAddress(ad) {
 #ifdef PAC1720_DEBUG
+    DEBUG_PRINTER.end();
+    delay(100); 
     DEBUG_PRINTER.begin(115200);
 #endif
     DEBUG_PRINTLN("Call Contructor");
@@ -178,21 +182,28 @@ PAC1720_LOW_LIMIT_STATUS_REG PAC1720::getLowLimitStatus() {
 }
 
 void PAC1720::setVoltageHighLimit(float ch1_lim, float ch2_lim) {
-    DEBUG_PRINTF("VSRC1 LIM: %d\n", (uint16_t)(ch1_lim / (40 - (40 / (float)(256 * (1 << _vsrc_samp_time)))) * (float)((256 * (1 << _vsrc_samp_time)) - 1)) >> 3); 
-    writeByte(PAC1720_ADDR_CH1_VSRC_HIGH_LIM, (uint16_t)(ch1_lim / (40 - (40 / (float)(256 * (1 << _vsrc_samp_time)))) * (float)((256 * (1 << _vsrc_samp_time)) - 1)) >> 3); 
+    DEBUG_PRINTF("VSRC1 HIGH LIM: %d / RAW %f\n", (uint16_t)(ch1_lim / 0.15625), ch1_lim); 
+    writeByte(PAC1720_ADDR_CH1_VSRC_HIGH_LIM, (uint16_t)(ch1_lim / 0.15625)); 
+    DEBUG_PRINTF("VSRC2 HIGH LIM: %d / RAW %f\n", (uint16_t)(ch2_lim / 0.15625), ch2_lim); 
+    writeByte(PAC1720_ADDR_CH2_VSRC_HIGH_LIM, (uint16_t)(ch2_lim / 0.15625)); 
 }
 void PAC1720::setVoltageLowLimit(float ch1_lim, float ch2_lim) {
-
+    DEBUG_PRINTF("VSRC1 LOW LIM: %d / RAW %f\n", (uint16_t)(ch1_lim / 0.15625), ch1_lim); 
+    writeByte(PAC1720_ADDR_CH1_VSRC_LOW_LIM, (uint16_t)(ch1_lim / 0.15625)); 
+    DEBUG_PRINTF("VSRC2 LOW LIM: %d / RAW %f\n", (uint16_t)(ch2_lim / 0.15625), ch2_lim); 
+    writeByte(PAC1720_ADDR_CH2_VSRC_LOW_LIM, (uint16_t)(ch2_lim / 0.15625)); 
 }
 void PAC1720::setCurrentHighLimit(float ch1_lim, float ch2_lim) {
-    DEBUG_PRINTF("VSENSE1 LIM: %d\n", (int16_t)(ch1_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * ((_cs_samp_time < 5) ? (64 * (1 << _cs_samp_time)) - 1 : 2047)) >> 4); 
-    DEBUG_PRINTF("VSENSE2 LIM: %d\n", (int16_t)(ch2_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * ((_cs_samp_time < 5) ? (64 * (1 << _cs_samp_time)) - 1 : 2047)) >> 4); 
-    writeByte(PAC1720_ADDR_CH1_VSEN_HIGH_LIM, (int16_t)(ch1_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * ((_cs_samp_time < 5) ? (64 * (1 << _cs_samp_time)) - 1 : 2047)) >> 4); 
-    writeByte(PAC1720_ADDR_CH2_VSEN_HIGH_LIM, (int16_t)(ch2_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * ((_cs_samp_time < 5) ? (64 * (1 << _cs_samp_time)) - 1 : 2047)) >> 4); 
+    DEBUG_PRINTF("VSENSE1 HIGH LIM: %d / RAW %f\n", (int16_t)(ch1_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * 2047) >> 4, ch1_lim); 
+    DEBUG_PRINTF("VSENSE2 HIGH LIM: %d / RAW %f\n", (int16_t)(ch2_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * 2047) >> 4, ch2_lim); 
+    writeByte(PAC1720_ADDR_CH1_VSEN_HIGH_LIM, (int16_t)(ch1_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * 2047) >> 4); 
+    writeByte(PAC1720_ADDR_CH2_VSEN_HIGH_LIM, (int16_t)(ch2_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * 2047) >> 4); 
 }
 void PAC1720::setCurrentLowLimit(float ch1_lim, float ch2_lim) {
-    writeByte(PAC1720_ADDR_CH1_VSEN_LOW_LIM, (int16_t)(ch1_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * ((_cs_samp_time < 5) ? (64 * (1 << _cs_samp_time)) - 1 : 2047)) >> 4); 
-    writeByte(PAC1720_ADDR_CH2_VSEN_LOW_LIM, (int16_t)(ch2_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * ((_cs_samp_time < 5) ? (64 * (1 << _cs_samp_time)) - 1 : 2047)) >> 4); 
+    DEBUG_PRINTF("VSENSE1 LOW LIM: %d / RAW %f\n", (int16_t)(ch1_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * 2047) >> 4, ch1_lim); 
+    DEBUG_PRINTF("VSENSE2 LOW LIM: %d / RAW %f\n", (int16_t)(ch2_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * 2047) >> 4, ch2_lim); 
+    writeByte(PAC1720_ADDR_CH1_VSEN_LOW_LIM, (int16_t)(ch1_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * 2047) >> 4); 
+    writeByte(PAC1720_ADDR_CH2_VSEN_LOW_LIM, (int16_t)(ch2_lim / ((10 << _cs_rng) * 0.001 / _shuntResistance) * 2047) >> 4); 
 }
 
 uint8_t PAC1720::readPID() {
